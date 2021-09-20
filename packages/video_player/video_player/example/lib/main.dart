@@ -33,6 +33,8 @@ class _App extends StatelessWidget {
               key: const ValueKey<String>('push_tab'),
               icon: const Icon(Icons.navigation),
               onPressed: () {
+                print('!!@ Navigator.push _PlayerVideoAndPopPage');
+                print(context);
                 Navigator.push<_PlayerVideoAndPopPage>(
                   context,
                   MaterialPageRoute<_PlayerVideoAndPopPage>(
@@ -348,15 +350,18 @@ class _PlayerVideoAndPopPage extends StatefulWidget {
 class _PlayerVideoAndPopPageState extends State<_PlayerVideoAndPopPage> {
   late VideoPlayerController _videoPlayerController;
   bool startedPlaying = false;
+  bool poppedPlaying = false;
 
   @override
   void initState() {
     super.initState();
-
     _videoPlayerController =
         VideoPlayerController.asset('assets/Butterfly-209.mp4');
     _videoPlayerController.addListener(() {
-      if (startedPlaying && !_videoPlayerController.value.isPlaying) {
+      if (startedPlaying && !_videoPlayerController.value.isPlaying && !poppedPlaying) {
+        print('!!@ _PlayerVideoAndPopPage video stopped - context');
+        print(context);
+        poppedPlaying = true;
         Navigator.pop(context);
       }
     });
@@ -380,20 +385,40 @@ class _PlayerVideoAndPopPageState extends State<_PlayerVideoAndPopPage> {
     return Material(
       elevation: 0,
       child: Center(
-        child: FutureBuilder<bool>(
-          future: started(),
-          builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-            if (snapshot.data == true) {
-              return AspectRatio(
-                aspectRatio: _videoPlayerController.value.aspectRatio,
-                child: VideoPlayer(_videoPlayerController),
-              );
-            } else {
-              return const Text('waiting for video to load');
-            }
-          },
-        ),
-      ),
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                print('!!@ Go back - context');
+                print(context);
+                Navigator.pop(context);
+              },
+              child: const Text('Go back!'),
+            ),
+            FutureBuilder<bool>(
+              future: started(),
+              builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                if (snapshot.data == true) {
+                  return AspectRatio(
+                    aspectRatio: _videoPlayerController.value.aspectRatio,
+                    child: VideoPlayer(_videoPlayerController),
+                  );
+                } else {
+                  return const Text('waiting for video to load');
+                }
+              },
+            ),
+          ])),
     );
   }
 }
+
+// ElevatedButton(
+//           child: const Text('Open route'),
+//           onPressed: () {
+//             Navigator.push(
+//               context,
+//               MaterialPageRoute(builder: (context) => const SecondRoute()),
+//             );
+//           },
