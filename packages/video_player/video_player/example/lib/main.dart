@@ -413,12 +413,3 @@ class _PlayerVideoAndPopPageState extends State<_PlayerVideoAndPopPage> {
     );
   }
 }
-
-// ElevatedButton(
-//           child: const Text('Open route'),
-//           onPressed: () {
-//             Navigator.push(
-//               context,
-//               MaterialPageRoute(builder: (context) => const SecondRoute()),
-//             );
-//           },
